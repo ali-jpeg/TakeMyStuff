@@ -34,20 +34,30 @@ export class HomeComponent implements OnInit{
     this.getLocation();
   }
 
+  drawCircle(latitude: number,longitude: number, radius: number, changable: boolean ){
+    const circle = new google.maps.Circle(
+      {
+        map: this.map,
+        radius: radius,
+        center:{ lat: latitude, lng: longitude },
+        editable: changable
+      }
+      
+    );
+  }
+  drawMarker(latitude: number, longitude: number){
+    const marker = new google.maps.Marker({
+      position: { lat: latitude, lng: longitude },
+      map: this.map,
+    });
+  }
+
   drawCircleOnClick() {
     if (this.map) {
       google.maps.event.addListener(this.map, 'dblclick',(event:any)=>{
         console.log("You pressed on "+event.latLng.lat()+ " "+ event.latLng.lng());
-        const circle = new google.maps.Circle(
-          {
-            map: this.map,
-            radius: 100,
-            center: event.latLng,
-            editable: true
-          }
-          
-        );
-        let fence = {lat:event.latLng.lat(), lng:event.latLng.lng(), radius:circle.radius};
+        this.drawCircle(event.latLng.lat(),event.latLng.lng(),100, true);
+        let fence = {lat:event.latLng.lat(), lng:event.latLng.lng(), radius: 100};
         this.fences.push(fence);
         this.upload2Firebase(fence);
       });
@@ -58,10 +68,7 @@ export class HomeComponent implements OnInit{
     if (this.map) {
       google.maps.event.addListener(this.map, 'rightclick', (event: any) => {
         console.log("Adding marker at " + event.latLng.lat() + ", " + event.latLng.lng());
-        const marker = new google.maps.Marker({
-          position: event.latLng,
-          map: this.map,
-        });
+        this.drawMarker(event.latLng.lat(),event.latLng.lng()); 
       });
     }
   }
