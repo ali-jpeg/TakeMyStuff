@@ -2,14 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MContainerComponent } from '../../m-framework/m-container/m-container.component';
- 
+import { MMapComponent } from '../../m-framework/m-map/m-map.component';
+import { FirebaseService } from '../../services/firebase.service';
 //@ts-ignore
 declare var google; // Forward Declaration
  
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [MContainerComponent,CommonModule,FormsModule],
+  imports: [MContainerComponent,CommonModule,FormsModule, MMapComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
@@ -23,7 +24,7 @@ export class HomeComponent implements OnInit{
  
   fences: any[];
  
-  constructor(){
+  constructor(private firebaseService: FirebaseService){
     this.lat = 0;
     this.lng = 0;
     this.fences = [];
@@ -32,34 +33,47 @@ export class HomeComponent implements OnInit{
   ngOnInit(){
     this.getLocation();
   }
- 
-  async initMap(){  
-    const { Map } = await google.maps.importLibrary("maps");
-    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
- 
-    this.map = new Map(document.getElementById("map"),
-      {
-        zoom:16,
-        center: {lat: this.lat, lng: this.lng},
-        disableDoubleClickZoom: true,
-        mapId: "Demo Map"
-      }
-    );
-    
-    google.maps.event.addListener(this.map, 'dblclick',(event:any)=>{
-      console.log("You pressed on "+event.latLng.lat()+ " "+ event.latLng.lng());
-      const circle = new google.maps.Circle(
-        {
+
+  drawCircleOnClick() {
+    if (this.map) {
+      google.maps.event.addListener(this.map, 'dblclick',(event:any)=>{
+        console.log("You pressed on "+event.latLng.lat()+ " "+ event.latLng.lng());
+        const circle = new google.maps.Circle(
+          {
+            map: this.map,
+            radius: 100,
+            center: event.latLng,
+            editable: true
+          }
+          
+        );
+        let fence = {lat:event.latLng.lat(), lng:event.latLng.lng(), radius:circle.radius};
+        this.fences.push(fence);
+        this.upload2Firebase(fence);
+      });
+      
+    }
+  }
+  addMarkerOnClick() {
+    if (this.map) {
+      google.maps.event.addListener(this.map, 'rightclick', (event: any) => {
+        console.log("Adding marker at " + event.latLng.lat() + ", " + event.latLng.lng());
+        const marker = new google.maps.Marker({
+          position: event.latLng,
           map: this.map,
-          radius: 100,
-          center: event.latLng,
-          editable: true
-        }
-      );
-      this.fences.push(circle);
-    });
- 
- 
+        });
+      });
+    }
+  }
+  getMapInstance(map: any) {
+    this.map = map;
+    this.drawCircleOnClick();
+    this.addMarkerOnClick();
+  }
+  initMap() {
+    if (this.map) {
+      this.map.setCenter({ lat: this.lat, lng: this.lng });
+    }
   }
   getLocation(){
     navigator.geolocation.getCurrentPosition((data)=>{
@@ -69,9 +83,14 @@ export class HomeComponent implements OnInit{
     });
   }
  
-  upload2Firebase(){
-    //TODO: take fences and push to firebase using firebase service
+  upload2Firebase(fence: any){
+    this.firebaseService.addToList("/Fences",fence)
   }
- 
+  getFences(){
+    this.firebaseService.readList("/Fences").then((data)=>{
+      console.log(data);
+    })
+  }
+  
 }
  
