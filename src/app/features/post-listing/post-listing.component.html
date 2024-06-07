@@ -1,0 +1,57 @@
+<m-container class="post-listing-container">
+  <br><br><br><br>
+  <h2 class="center-align">Post a Listing</h2>
+  <form class="pure-form pure-form-stacked" (ngSubmit)="onSubmit()">
+    <div *ngIf="submitted" class="success-message">
+      <p>Your post has been successfully listed!</p>
+    </div>
+    <div class="input-field">
+      <label for="username">Username</label>
+      <input type="text" id="username" placeholder="e.g., johndoe" [(ngModel)]="username" name="username" required>
+    </div>
+    <div class="input-field">
+      <label for="category">Category</label>
+      <select id="category" [(ngModel)]="category" name="category" class="browser-default" required>
+        <option value="" disabled selected>Select a category</option>
+        <option value="Technology">Technology</option>
+        <option value="Toys">Toys</option>
+        <option value="Clothes">Clothes</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div class="input-field">
+      <label for="title">Title</label>
+      <input type="text" id="title" placeholder="e.g., iPhone 15" [(ngModel)]="title" name="title" required>
+    </div>
+    <div class="input-field">
+      <label for="description">Description</label>
+      <textarea id="description" class="materialize-textarea" placeholder="e.g., 256GB, Black" [(ngModel)]="description" name="description" required></textarea>
+    </div>
+    <div class="input-field">
+      <label for="availability">Availability</label>
+      <input type="number" id="availability" placeholder="e.g., 3" [(ngModel)]="availability" name="availability" required>
+    </div>
+    <div class="input-field">
+      <label for="location">Location</label>
+      <input type="text" id="location" [(ngModel)]="location" name="location" disabled>
+    </div>
+    <div class="input-field">
+      <label for="image">Image</label>
+      <input type="file" id="image" (change)="onFileChange($event)" accept="image/*">
+    </div>
+    <div class="center-align">
+      <button class="pure-button" type="submit">Post Listing</button>
+    </div>
+  </form>
+</m-container>
+
+<style>
+.success-message {
+  background-color: #dff0d8;
+  color: #3c763d;
+  padding: 10px;
+  border: 1px solid #d6e9c6;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+</style>

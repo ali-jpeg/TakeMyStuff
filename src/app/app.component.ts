@@ -20,7 +20,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './app.component.css',
 })
 export class AppComponent {
-  title = 'MApp';
+  title = 'TakeMyStuff';
 
   constructor() {
   
