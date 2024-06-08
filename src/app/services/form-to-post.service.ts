@@ -1,5 +1,10 @@
 import { Injectable } from '@angular/core';
 
+export interface TimeSlot {
+  start: string;
+  end: string;
+}
+
 export interface Post {
   username: string;
   title: string;
@@ -8,6 +13,7 @@ export interface Post {
   availability: number;
   location: string;
   imageUrl: string | ArrayBuffer | null;
+  timeSlots: TimeSlot[]; 
 }
 
 @Injectable({
@@ -24,11 +30,9 @@ export class FormToPostService {
   addPost(post: Post): void {
     this.posts.push(post);
     this.savePostsToSessionStorage();
-    console.log('Post added:', post);
   }
-  
+
   getPosts(): Post[] {
-    console.log('Getting posts:', this.posts);
     return this.posts;
   }
 
@@ -46,5 +50,4 @@ export class FormToPostService {
       this.posts = JSON.parse(storedPosts);
     }
   }
-  
 }

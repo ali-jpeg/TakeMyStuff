@@ -1,56 +1,108 @@
 <m-container class="discover-listings-container">
-  <br><br><br><br>
   <h2 class="center-align">Discover Listings</h2>
-
-  <div *ngFor="let post of posts" class="card">
-    <div class="card-image">
-      <img *ngIf="post.imageUrl" [src]="post.imageUrl" alt="Image not available">
-    </div>
-    <div class="card-content">
-      <span class="card-title">{{ post.title }}</span>
-      <p><strong>Posted by:</strong> {{ post.username }}</p>
+  <div *ngIf="posts.length === 0">
+    <p>No listings available.</p>
+  </div>
+  <div *ngFor="let post of posts" class="post-card">
+    <img [src]="post.imageUrl" alt="{{ post.title }}" class="post-image">
+    <div class="post-content">
+      <h3>{{ post.title }}</h3>
+      <p>{{ post.description }}</p>
       <p><strong>Category:</strong> {{ post.category }}</p>
-      <p><strong>Description:</strong> {{ post.description }}</p>
       <p><strong>Availability:</strong> {{ post.availability }}</p>
-      <p><strong>Location:</strong> {{ post.location }}</p>
-      <button (click)="selectPostOwner(post.username)" class="pure-button">Message Owner</button>
+      <button (click)="selectPost(post)" class="select-post-button">Send Message</button>
+      <div *ngIf="selectedPost && selectedPost === post" class="selected-post">
+        <h3>Send Message to {{ selectedPost.username }}</h3>
+        <div>
+          <label for="senderName">Your Name:</label>
+          <input type="text" id="senderName" [(ngModel)]="senderName">
+        </div>
+        <div>
+          <label for="whatsappNumber">Your WhatsApp Number:</label>
+          <input type="text" id="whatsappNumber" [(ngModel)]="whatsappNumber">
+        </div>
+        <div>
+          <label for="timeSlot">Select Time Slot:</label>
+          <select id="timeSlot" [(ngModel)]="selectedTimeSlot">
+            <option *ngFor="let slot of selectedPost.timeSlots" [ngValue]="slot">{{ slot.start }} - {{ slot.end }}</option>
+          </select>
+        </div>
+        <div>
+          <label for="messageContent">Message:</label>
+          <textarea id="messageContent" [(ngModel)]="messageContent"></textarea>
+        </div>
+        <button (click)="sendMessage()" class="send-message-button">Send Message</button>
+      </div>
     </div>
   </div>
 
-  <div *ngIf="selectedPostOwner">
-    <h3>Send a Message to {{ selectedPostOwner }}</h3>
-    <form class="pure-form pure-form-stacked" (ngSubmit)="sendMessage()">
-      <div class="input-field">
-        <label for="messageContent">Message</label>
-        <textarea id="messageContent" class="materialize-textarea" placeholder="Your message..." [(ngModel)]="messageContent" name="messageContent" required></textarea>
-      </div>
-      <div class="center-align">
-        <button class="pure-button" type="submit">Send Message</button>
-      </div>
-    </form>
+  <div *ngIf="statusMessage" class="status-message">
+    {{ statusMessage }}
   </div>
 </m-container>
 
 <style>
-.success-message {
+.post-card {
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #d6e9c6;
+  border-radius: 4px;
+  display: flex;
+  cursor: pointer;
+}
+
+.post-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.post-content {
+  padding: 10px;
+  flex-grow: 1;
+}
+
+.select-post-button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.select-post-button:hover {
+  background-color: #0056b3;
+}
+
+.selected-post {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #d6e9c6;
+  border-radius: 4px;
+}
+
+.send-message-button {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.send-message-button:hover {
+  background-color: #218838;
+}
+
+.status-message {
   background-color: #dff0d8;
   color: #3c763d;
   padding: 10px;
   border: 1px solid #d6e9c6;
   border-radius: 4px;
-  margin-bottom: 20px;
-}
-.card {
-  margin-bottom: 20px;
-  padding: 10px;
-  border: 1px solid #d6e9c6;
-  border-radius: 4px;
-}
-.card-content {
-  padding: 10px;
-}
-.card-image img {
-  max-width: 100%;
-  height: auto;
+  margin-top: 20px;
 }
 </style>

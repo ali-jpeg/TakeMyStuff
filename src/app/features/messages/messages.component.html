@@ -1,6 +1,8 @@
 <m-container class="messages-container">
-  <br> <br> <br> <br>
   <h2 class="center-align">Your Messages</h2>
+  <div *ngIf="statusMessage" class="status-message">
+    {{ statusMessage }}
+  </div>
   <div>
     <label for="recipient">Select Recipient:</label>
     <select id="recipient" [(ngModel)]="recipient" (change)="loadMessages()">
@@ -12,9 +14,13 @@
   </div>
   <div *ngFor="let message of messages" class="message-card">
     <div class="message-content">
-      <p><strong>From:</strong> {{ message.sender }}</p>
+      <p><strong>From:</strong> {{ message.senderName }} ({{ message.sender }})</p>
+      <p><strong>WhatsApp:</strong> {{ message.whatsappNumber }}</p>
       <p>{{ message.content }}</p>
       <p><small>{{ message.timestamp | date:'short' }}</small></p>
+      <p *ngIf="message.approved"><strong>Location:</strong> {{ message.location }}</p>
+      <p *ngIf="message.approved"><strong>Approved</strong></p>
+      <button *ngIf="!message.approved" (click)="approveMessage(message.id)">Approve</button>
     </div>
   </div>
 </m-container>
@@ -28,5 +34,13 @@
 }
 .message-content {
   padding: 10px;
+}
+.status-message {
+  background-color: #dff0d8;
+  color: #3c763d;
+  padding: 10px;
+  border: 1px solid #d6e9c6;
+  border-radius: 4px;
+  margin-bottom: 20px;
 }
 </style>

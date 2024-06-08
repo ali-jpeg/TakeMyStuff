@@ -1,9 +1,9 @@
 <m-container class="post-listing-container">
-  <br><br><br><br>
+  <br><br>
   <h2 class="center-align">Post a Listing</h2>
   <form class="pure-form pure-form-stacked" (ngSubmit)="onSubmit()">
     <div *ngIf="submitted" class="success-message">
-      <p>Your post has been successfully listed!</p>
+      <p>Your post has been successfully listed! This is post number {{ postNumber }}.</p>
     </div>
     <div class="input-field">
       <label for="username">Username</label>
@@ -38,6 +38,15 @@
     <div class="input-field">
       <label for="image">Image</label>
       <input type="file" id="image" (change)="onFileChange($event)" accept="image/*">
+    </div>
+    <div class="input-field">
+      <label>Time Slots</label>
+      <div *ngFor="let slot of timeSlots; let i = index">
+        <input type="time" [(ngModel)]="slot.start" name="timeSlotStart{{i}}" required>
+        <input type="time" [(ngModel)]="slot.end" name="timeSlotEnd{{i}}" required>
+        <button type="button" (click)="removeTimeSlot(i)">Remove</button>
+      </div>
+      <button type="button" (click)="addTimeSlot()">Add Time Slot</button>
     </div>
     <div class="center-align">
       <button class="pure-button" type="submit">Post Listing</button>
